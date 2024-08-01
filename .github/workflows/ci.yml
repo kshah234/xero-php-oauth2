@@ -26,7 +26,7 @@ jobs:
         run: composer install
 
       - name: Compile build
-        run: find . -name "*.php" | xargs -n 1 php -l || exit 1
+        run: find . -name "*.php" ! -path "./vendor/*" | xargs -n 1 php -l || exit 1
 
       - name: Run tests
         run: ./vendor/bin/phpunit
