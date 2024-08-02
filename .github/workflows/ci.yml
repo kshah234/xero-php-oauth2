@@ -12,15 +12,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: php:8.2-cli
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
 
       - name: Install dependencies
         run: composer install
