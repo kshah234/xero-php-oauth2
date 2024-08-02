@@ -13,11 +13,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: php:8.2-cli
+      image: php:7.1-fpm
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Install libzip and PHP extensions
+        run: |
+            apt-get update
+            apt-get install -y libzip-dev zip unzip
+            docker-php-ext-configure zip
+            docker-php-ext-install zip
 
       - name: Install Composer
         run: |
