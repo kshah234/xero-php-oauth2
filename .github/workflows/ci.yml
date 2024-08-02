@@ -1,0 +1,43 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - master
+      - php-workflows-poc
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: php:7.1-fpm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install libzip and PHP extensions
+        run: |
+            apt-get update
+            apt-get install -y libzip-dev zip unzip
+            docker-php-ext-configure zip
+            docker-php-ext-install zip
+
+      - name: Install Composer
+        run: |
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+            php -r "unlink('composer-setup.php');"
+            composer --version
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Compile build
+        run: find . -name "*.php" ! -path "./vendor/*" | xargs -n 1 php -l || exit 1
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit
