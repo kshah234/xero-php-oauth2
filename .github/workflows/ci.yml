@@ -27,7 +27,7 @@ jobs:
             composer --version
 
       - name: Install dependencies
-        run: composer install
+        run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Compile build
         run: find . -name "*.php" ! -path "./vendor/*" | xargs -n 1 php -l || exit 1
